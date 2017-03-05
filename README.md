@@ -51,7 +51,7 @@ public function behaviors()
     return [
         ...,
         'ipban' => [
-            'class' => \maxodrom\redis\filters\IpBanFilter::className(),
+            'class' => \maxodrom\redis\filters\RedisIpBan::className(),
             'redis' => Yii::$app->redis,
         ],
     ];
