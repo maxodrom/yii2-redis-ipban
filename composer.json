@@ -1,0 +1,26 @@
+{
+    "name": "maxodrom/yii2-redis-ipban",
+    "type": "yii2-extension",
+    "description": "Yii 2 Redis IP ban filter action.",
+    "keywords": ["yii2", "redis", "ip", "ban", "filter"],
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/maxodrom/yii2-redis-ipban/issues",
+        "wiki": "https://github.com/maxodrom/yii2-redis-ipban/wiki",
+        "source": "https://github.com/maxodrom/yii2-redis-ipban"
+    },
+    "authors": [
+        {
+            "name": "Max Alexandrov",
+            "email": "max@maxodrom.ru"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2-redis": "~2.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "maxodrom\\redis\\": "src/"
+        }
+    }
+}
