@@ -32,6 +32,10 @@ class RedisIpBan extends ActionFilter
      * @var string
      */
     public $exceptionMessage;
+    /**
+     * @var string Current remote IP
+     */
+    protected $ip;
 
 
     /**
@@ -48,17 +52,31 @@ class RedisIpBan extends ActionFilter
      */
     public function beforeAction($action)
     {
+        $this->ip = Yii::$app->getRequest()->getUserIP();
         $redis = $this->redis;
-        $result = $redis->hget(
-            $this->hashName,
-            Yii::$app->getRequest()->getUserIP()
-        );
-        if (null === $result) {
+        $info = $redis->hget($this->hashName, $this->ip);
+        if (null === $info) {
             return true;
         } else {
-            $this->denyAccess();
+            // get timestamp, ttl & total hits
+            $i = explode('|', $info);
+            list($ts, $ttl, $hits) = $i;
 
-            return false;
+            if ($ttl > 0 && microtime(true) - $ts > $ttl) {
+                $redis->hdel($this->hashName, $this->ip);
+
+                return true;
+            } else {
+                ++$hits;
+                $redis->hset(
+                    $this->hashName,
+                    $this->ip,
+                    implode('|', ['ts' => $ts, 'ttl' => $ttl, 'hits' => $hits])
+                );
+                $this->denyAccess();
+
+                return false;
+            }
         }
     }
 
