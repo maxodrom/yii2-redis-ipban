@@ -15,7 +15,7 @@ php composer.phar require --prefer-dist maxodrom/yii2-redis-ipban
 or add
 
 ```json
-"maxodrom/yii2-redis-ipban": "0.1"
+"maxodrom/yii2-redis-ipban": "~1.0"
 ```
 
 to the require section of your composer.json.
@@ -51,7 +51,7 @@ public function behaviors()
     return [
         ...,
         'ipban' => [
-            'class' => \maxodrom\redis\filters\RedisIpBan::className(),
+            'class' => \maxodrom\redis\ipban\filters\RedisIpBan::className(),
             'redis' => Yii::$app->redis,
         ],
     ];

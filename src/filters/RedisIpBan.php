@@ -1,11 +1,11 @@
 <?php
 /**
  * @author Max Alexandrov <max@maxodrom.ru>
- * @version 0.1
+ * @since 0.1
  * @license MIT
  */
 
-namespace maxodrom\redis\filters;
+namespace maxodrom\redis\ipban\filters;
 
 use Yii;
 use yii\base\ActionFilter;
