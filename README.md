@@ -40,6 +40,17 @@ return [
 ];
 ```
 
+Also add the following to your application modules config:
+```php
+'modules' => [
+    'redis-ip-ban' => [
+        'class' => 'maxodrom\redis\ipban\RedisIpBanModule',
+        'redis' => 'redis',
+    ],
+    ...
+]
+```
+
 In your Controller you should use:
 
 ```php
