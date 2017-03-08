@@ -82,9 +82,10 @@ class DefaultController extends Controller
         $ttl = Yii::$app->getRequest()->post('ttl');
 
         $model = DynamicModel::validateData(compact('ip', 'ttl'), [
+            [['ip', 'ttl'], 'filter', 'filter' => 'trim'],
             ['ip', 'ip'],
             ['ttl', 'default', 'value' => -1],
-            ['ttl', 'integer'],
+            ['ttl', 'integer', 'min' => -1],
         ]);
 
         if ($model->hasErrors()) {
