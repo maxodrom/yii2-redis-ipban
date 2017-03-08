@@ -1,6 +1,8 @@
 yii2-redis-ipban
 ================
 
+[Yii2 Redis IP ban](./ban-list.png)
+
 Installation
 ------------
 
