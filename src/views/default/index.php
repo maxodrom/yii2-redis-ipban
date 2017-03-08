@@ -19,6 +19,38 @@ use yii\helpers\Url;
 
         <?= $this->render('../flash-messages') ?>
 
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="pull-right">
+                    <?= Html::beginForm('ban', 'post', [
+                        'class' => 'form-inline',
+                    ]) ?>
+                    <div class="form-group">
+                        <?= Html::textInput(
+                            'ip',
+                            null,
+                            [
+                                'class' => 'form-control',
+                                'placeholder' => 'enter IP here'
+                            ]
+                        ) ?>
+                    </div>
+                    <div class="form-group">
+                        <?= Html::textInput(
+                            'ttl',
+                            null,
+                            [
+                                'class' => 'form-control',
+                                'placeholder' => 'TTL, eg. 3600 = an hour'
+                            ]
+                        ) ?>
+                    </div>
+                    <?= Html::submitButton('Ban it!', ['class' => 'btn btn-danger']) ?>
+                    <?= Html::endForm(); ?>
+                </div>
+            </div>
+        </div>
+
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'columns' => [
