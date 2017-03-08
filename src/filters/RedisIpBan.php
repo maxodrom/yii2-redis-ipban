@@ -14,9 +14,9 @@ use yii\redis\Connection;
 use yii\web\ForbiddenHttpException;
 
 /**
- * Class IpBanFilter
+ * Class RedisIpBan
  *
- * @package common\actions\redis
+ * @package maxodrom\redis\ipban\filters
  */
 class RedisIpBan extends ActionFilter
 {
