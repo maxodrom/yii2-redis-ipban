@@ -8,6 +8,7 @@
 namespace maxodrom\redis\ipban\controllers;
 
 use Yii;
+use yii\helpers\Json;
 use yii\web\Controller;
 use yii\data\ArrayDataProvider;
 use yii\base\DynamicModel;
@@ -89,13 +90,23 @@ class DefaultController extends Controller
         ]);
 
         if ($model->hasErrors()) {
+            $msg = preg_replace('/[\n]+/', '', Html::errorSummary($model, [
+                'header' => 'Please, fix the following errors:',
+                'encode' => true
+            ]));
             Yii::$app->getSession()->setFlash(
                 'error',
-                preg_replace('/[\n]+/', '', Html::errorSummary($model, [
-                    'header' => 'Please, fix the following errors:',
-                    'encode' => true
-                ]))
+                $msg
             );
+
+            if (Yii::$app->getRequest()->getIsAjax()) {
+                echo Json::encode([
+                    'success' => false,
+                    'msg' => $msg,
+                ]);
+
+                Yii::$app->end();
+            }
 
             return $this->redirect(['index']);
         }
@@ -104,15 +115,33 @@ class DefaultController extends Controller
         $result = $this->redis->hset($this->hashName, $ip, implode('|', $arr));
 
         if ($result == 1) {
-            Yii::$app->getSession()->setFlash(
-                'success',
-                "$ip was banned successfully."
-            );
+            if (!Yii::$app->getRequest()->getIsAjax()) {
+                Yii::$app->getSession()->setFlash(
+                    'success',
+                    "$ip was banned successfully."
+                );
+            } else {
+                echo Json::encode([
+                    'success' => true,
+                    'msg' => "$ip was banned successfully.",
+                ]);
+            }
         } elseif ($result == 0) {
-            Yii::$app->getSession()->setFlash(
-                'info',
-                "$ip is already in banned IPs list."
-            );
+            if (!Yii::$app->getRequest()->getIsAjax()) {
+                Yii::$app->getSession()->setFlash(
+                    'info',
+                    "$ip is already in banned IPs list."
+                );
+            } else {
+                echo Json::encode([
+                    'success' => true,
+                    'msg' => "$ip is already in banned IPs list.",
+                ]);
+            }
+        }
+
+        if (Yii::$app->getRequest()->getIsAjax()) {
+            Yii::$app->end();
         }
 
         return $this->redirect(['index']);
@@ -130,10 +159,20 @@ class DefaultController extends Controller
         $result = $this->redis->hdel($this->hashName, $ip);
 
         if ($result === '1') {
-            Yii::$app->getSession()->setFlash(
-                'success',
-                "$ip was unbanned successfully."
-            );
+            $msg = "$ip was unbanned successfully.";
+            if (!Yii::$app->getRequest()->getIsAjax()) {
+                Yii::$app->getSession()->setFlash(
+                    'success',
+                    $msg
+                );
+            } else {
+                echo Json::encode([
+                    'success' => true,
+                    'msg' => $msg,
+                ]);
+
+                Yii::$app->end();
+            }
         }
 
         return $this->redirect(['index']);
