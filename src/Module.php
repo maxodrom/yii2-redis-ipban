@@ -8,9 +8,9 @@
 namespace maxodrom\redis\ipban;
 
 use Yii;
+use yii\web\Application;
 use yii\base\InvalidConfigException;
 use yii\web\ForbiddenHttpException;
-use yii\base\Module;
 use yii\di\Instance;
 use yii\redis\Connection;
 
@@ -19,7 +19,7 @@ use yii\redis\Connection;
  *
  * @package maxodrom\redis\ipban
  */
-class RedisIpBanModule extends Module
+class Module extends \yii\base\Module
 {
     /**
      * @inheritdoc
@@ -41,6 +41,10 @@ class RedisIpBanModule extends Module
      * by localhost.
      */
     public $allowedIPs = ['127.0.0.1', '::1'];
+    /**
+     * @var array RBAC named roles, e.g. ['Admin', 'Editor']
+     */
+    public $allowedRoles;
 
 
     /**
@@ -66,8 +70,20 @@ class RedisIpBanModule extends Module
             return false;
         }
 
-        if (Yii::$app instanceof \yii\web\Application && !$this->checkAccess()) {
-            throw new ForbiddenHttpException('You are not allowed to access this page.');
+        // check allowed IPs
+        if (is_array($this->allowedIPs) && !empty($this->allowedIPs)) {
+            if (Yii::$app instanceof Application && !$this->checkAccess()) {
+                throw new ForbiddenHttpException('You are not allowed to access this page.');
+            }
+        }
+
+        // check RBAC roles
+        $authManager = Yii::$app->getAuthManager();
+        if (null !== $authManager && is_array($this->allowedRoles) && !empty($this->allowedRoles)) {
+            $userRoles = array_keys($authManager->getRolesByUser(Yii::$app->user->id));
+            if (false === array_search($this->allowedRoles, $userRoles)) {
+                throw new ForbiddenHttpException('You are not allowed to access this page.');
+            }
         }
 
         return true;
