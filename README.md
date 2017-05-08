@@ -46,8 +46,10 @@ Also add the following to your application modules config:
 ```php
 'modules' => [
     'redis-ip-ban' => [
-        'class' => 'maxodrom\redis\ipban\RedisIpBanModule',
+        'class' => 'maxodrom\redis\ipban\Module',
         'redis' => 'redis',
+         'allowedIPs' => [], // dont't check IPs, otherwise you can use for example this array ['127.0.0.1', '::1']
+         'allowedRoles' => ['SuperAdmin'], // but check RBAC roles!
     ],
     ...
 ]
