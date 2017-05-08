@@ -81,7 +81,14 @@ class Module extends \yii\base\Module
         $authManager = Yii::$app->getAuthManager();
         if (null !== $authManager && is_array($this->allowedRoles) && !empty($this->allowedRoles)) {
             $userRoles = array_keys($authManager->getRolesByUser(Yii::$app->user->id));
-            if (false === array_search($this->allowedRoles, $userRoles)) {
+            $hasAccess = false;
+            foreach ($userRoles as $role) {
+                if (in_array($role, $this->allowedRoles)) {
+                    $hasAccess = true;
+                    break;
+                }
+            }
+            if (false === $hasAccess) {
                 throw new ForbiddenHttpException('You are not allowed to access this page.');
             }
         }
